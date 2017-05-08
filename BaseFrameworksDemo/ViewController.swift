@@ -14,9 +14,11 @@ class ViewController: UIViewController {
         return DisposeBag()
     }()
     var model : GetVillageListModel!
+    var tableView:UITableView!
+    var dataSource:NSArray = ["baseTableView","loading","空页面处理","选择图片","弹框"]
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        //网络请求
         Networking.newDefaultNetworking()
             .request(API.getvillageList(keyword:"",count:"10",page:"\(1)"))
             .filterSuccessfulStatusCodes()
@@ -41,7 +43,11 @@ class ViewController: UIViewController {
                 
             }.addDisposableTo(disposeBag)
         
-
+//创建ui
+        tableView = UITableView.init(frame: self.view.frame, style: .plain)
+        tableView.delegate = self
+        tableView.dataSource = self
+        view.addSubview(tableView)
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -52,4 +58,36 @@ class ViewController: UIViewController {
 
 
 }
-
+extension ViewController:UITableViewDelegate,UITableViewDataSource{
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return dataSource.count
+    }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0.01
+    }
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0.01
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell.init(style: .default, reuseIdentifier: "cellidentifier")
+        cell.textLabel?.text = dataSource[indexPath.row] as? String
+        return cell
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch indexPath.row {
+        case 0:
+            pushVC(FirstViewController())
+        case 1:
+            pushVC(SecondViewController())
+        case 2:
+            pushVC(ThirdViewController())
+        case 3:
+            pushVC(FourViewController())
+        default:
+            pushVC(FiveViewController())
+        }
+    }
+}

@@ -180,11 +180,12 @@ extension Networking:BackLoginable {
             let url = target.baseURL.appendingPathComponent(target.path).absoluteString
             
             var dict = target.parameters
-            
-            if case .request = target.task, dict is [String : String]  {
-                dict?["sign"] = API.sign(params: dict as! [String : String], secret: String.signKey)
+            if target.needSign {
+                if case .request = target.task, dict is [String : String]  {
+                    dict?["sign"] = API.sign(params: dict as! [String : String], secret: String.signKey)
+                }
             }
-            
+                        
             let endpoint = Endpoint<T>(
                 url: url,
                 sampleResponseClosure: { .networkResponse(200, target.sampleData) },

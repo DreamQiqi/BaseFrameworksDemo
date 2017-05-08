@@ -13,12 +13,17 @@ import EZSwiftExtensions
 import CryptoSwift
 protocol XAuthType {
     var needToken:Bool{get}//是否需要登陆
+    var needSign:Bool{get}//是否需要签名
 }
 enum API{
     case getvillageList(keyword:String,count:String,page:String)
     case refresh_token
 }
 extension API:TargetType,XAuthType{
+    internal var needSign: Bool {
+        return true
+    }
+
     ///是否需要登录
     internal var needToken: Bool {
         switch self {
